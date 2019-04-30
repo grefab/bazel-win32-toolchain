@@ -466,7 +466,7 @@ def configure_windows_toolchain(repository_ctx):
       "%{msys_x64_coverage}": ""
   }
   for architecture in toolchains:
-    options += _get_toolchain_options(repository_ctx, vc_path, architecture, toolchains[architecture])
+    options.update(_get_toolchain_options(repository_ctx, vc_path, architecture, toolchains[architecture]))
 
   configure_windows_crosstool_template(repository_ctx, "CROSSTOOL.tpl", toolchains.keys())
   tpl(repository_ctx, "CROSSTOOL", options, generated=True)
