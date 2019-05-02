@@ -198,17 +198,17 @@ def find_vc_path(repository_ctx):
     _auto_configure_warning_maybe(repository_ctx, "Visual C++ build tools found at %s" % vc_dir)
     return vc_dir
 
-def _is_vs_2017(vc_path):
+def _is_vs_2017_or_2019(vc_path):
   """Check if the installed VS version is Visual Studio 2017."""
   # In VS 2017, the location of VC is like:
   # C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\
   # In VS 2015 or older version, it is like:
   # C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\
-  return vc_path.find("2017") != -1
+  return vc_path.find("2017") != -1 or vc_path.find("2019") != -1
 
 def _find_vcvarsall_bat_script(repository_ctx, vc_path):
   """Find vcvarsall.bat script. Doesn't %-escape the result."""
-  if _is_vs_2017(vc_path):
+  if _is_vs_2017_or_2019(vc_path):
     vcvarsall = vc_path + "\\Auxiliary\\Build\\VCVARSALL.BAT"
   else:
     vcvarsall = vc_path + "\\VCVARSALL.BAT"
@@ -244,7 +244,7 @@ def find_msvc_tool(repository_ctx, vc_path, architecture, tool):
     if tool == "ml.exe":
       tool = "ml64.exe"
   tool_path = ""
-  if _is_vs_2017(vc_path):
+  if _is_vs_2017_or_2019(vc_path):
     # For VS 2017, the tools are under a directory like:
     # C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Tools\MSVC\14.10.24930\bin\HostX64\x64
     dirs = repository_ctx.path(vc_path + "\\Tools\\MSVC").readdir()
